@@ -8,8 +8,8 @@ script.on_event({defines.events.on_player_selected_area},
 				left_top = e.area.left_top,
 				right_bottom = e.area.right_bottom,
 				surface = "nauvis",
-				time_to_live = 120 }
+				time_to_live = 120,
+				force = game.players[e.player_index].force }
 		end
 	end
 )
-
