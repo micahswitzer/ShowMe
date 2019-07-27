@@ -4,7 +4,6 @@ showmeTool.name = "showme-tool"
 showmeTool.type = "selection-tool"
 showmeTool.selection_mode = {"nothing"}
 showmeTool.alt_selection_mode = {"nothing"}
-showmeTool.selection_cursor_box_type = "entity"
 
 local giveTool = table.deepcopy(data.raw["shortcut"]["give-upgrade-planner"])
 
