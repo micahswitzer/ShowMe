@@ -15,7 +15,8 @@ script.on_event({defines.events.on_player_joined_game},
 			type = "frame",
 			name = "showme-name-frame",
 			caption = "Enter a name",
-			direction = "horizontal"
+			direction = "horizontal",
+			auto_center = true
 		}
 		showme_name_frame.visible = false
 		showme_name_frame.add {
@@ -29,6 +30,7 @@ script.on_event({defines.events.on_player_joined_game},
 			name = "showme-name-confirm",
 			caption = "Ok"
 		}
+		showme_name_frame.force_auto_center()
 	end
 )
 
