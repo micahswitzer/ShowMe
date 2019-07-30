@@ -1,6 +1,3 @@
-local line_width = 4
-local default_ttl = 120
-
 script.on_init(
 	function ()
 		global.boxes = {}
@@ -36,6 +33,8 @@ script.on_event({defines.events.on_player_joined_game},
 
 local function player_selected_area(e, name_text)
 	local player = game.players[e.player_index]
+	local ttl = settings.get_player_settings(player)["showme-box-duration"].value
+	local line_width = settings.get_player_settings(player)["showme-box-line-width"].value
 	local lt = e.area.left_top
 	local rb = e.area.right_bottom
 	local rect_id = rendering.draw_rectangle {
@@ -45,7 +44,7 @@ local function player_selected_area(e, name_text)
 		left_top = lt,
 		right_bottom = rb,
 		surface = player.surface,
-		time_to_live = default_ttl,
+		time_to_live = ttl,
 		forces = {player.force}
 	}
 	local line_id = rendering.draw_line {
@@ -54,7 +53,7 @@ local function player_selected_area(e, name_text)
 		from = {x = lt.x, y = rb.y},
 		to = {x = lt.x, y = lt.y},
 		surface = player.surface,
-		time_to_live = default_ttl,
+		time_to_live = ttl,
 		forces = {player.force}
 	}
 	if name_text ~= nil then
@@ -63,11 +62,11 @@ local function player_selected_area(e, name_text)
 			surface = player.surface,
 			target = {lt.x, rb.y + 0.5},
 			color = {r = 1, g = 1, b = 1},
-			time_to_live = default_ttl,
+			time_to_live = ttl,
 			scale = 2
 		}
 	end
-	table.insert(global.boxes, {line_id, rect_id})
+	table.insert(global.boxes, {line_id, rect_id, e.player_index})
 end
 
 script.on_event({defines.events.on_player_selected_area},
@@ -99,9 +98,11 @@ script.on_event({defines.events.on_tick},
 			local line_id = p[1]
 			local rect_id = p[2]
 			if rendering.is_valid(rect_id) then
+				-- this isn't very efficient, but it will suffice for now
+				local ttl = settings.get_player_settings(game.players[p[3]])["showme-box-duration"].value
 				local lt = rendering.get_left_top(rect_id).position
 				local rb = rendering.get_right_bottom(rect_id).position
-				local height = (lt.y - rb.y) * (rendering.get_time_to_live(line_id) / (default_ttl + 0.0))
+				local height = (lt.y - rb.y) * (rendering.get_time_to_live(line_id) / (ttl + 0.0))
 				rendering.set_to(line_id, {x = lt.x, y = rb.y + height})
 			else
 				table.remove(global.boxes, idx)
