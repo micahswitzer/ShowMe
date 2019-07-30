@@ -82,8 +82,10 @@ script.on_event({defines.events.on_player_alt_selected_area},
 	function (e)
 		if e.item == "showme-tool" then
 			global.to_display[e.player_index] = e
-			game.players[e.player_index].gui.screen["showme-name-frame"]["showme-name-box"].text = ""
+			local box = game.players[e.player_index].gui.screen["showme-name-frame"]["showme-name-box"]
+			box.text = ""
 			game.players[e.player_index].gui.screen["showme-name-frame"].visible = true
+			box.focus()
 		end
 	end
 )
@@ -112,6 +114,15 @@ script.on_event({defines.events.on_gui_click},
 	function (e)
 		if e.element.name == "showme-name-confirm" then
 			player_selected_area(global.to_display[e.player_index], e.element.parent["showme-name-box"].text)
+			e.element.parent.visible = false
+		end
+	end
+)
+
+script.on_event({defines.events.on_gui_confirmed},
+	function (e)
+		if e.element.name == "showme-name-box" then
+			player_selected_area(global.to_display[e.player_index], e.element.text)
 			e.element.parent.visible = false
 		end
 	end
