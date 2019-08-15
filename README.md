@@ -1,9 +1,8 @@
 # *Currently in Development*
 Please don't expect everything to work perfectly. However I'm very open to any suggestions and feedback! See below for how to submit feedback.
 
-# Show Me
-
-## A digital pointer for Factorio
+# Show Me - A digital pointer for Factorio
+![Show Me Thumbnail](thumbnail.png)
 
 ## Usage
 Click on the shortcut in the toolbar to the right of the hotbar and then use the tool to select an area.
