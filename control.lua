@@ -8,6 +8,9 @@ script.on_init(
 script.on_event({defines.events.on_player_joined_game},
 	function (e)
 		local player = game.players[e.player_index]
+		if player.gui.screen["showme-name-frame"] ~= nil then
+			return
+		end
 		local showme_name_frame = player.gui.screen.add {
 			type = "frame",
 			name = "showme-name-frame",
