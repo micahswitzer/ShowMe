@@ -1,6 +1,7 @@
 script.on_init(
 	function ()
 		global.boxes = {}
+		global.hover_targets = {}
 		global.to_display = {}
 	end
 )
@@ -129,5 +130,39 @@ script.on_event({defines.events.on_gui_confirmed},
 			player_selected_area(global.to_display[e.player_index], e.element.text)
 			e.element.parent.visible = false
 		end
+	end
+)
+
+script.on_event({defines.events.on_selected_entity_changed},
+	function (e)
+		local player = game.get_player(e.player_index)
+
+		local selected_entity = player.selected
+		local poly_id = global.hover_targets[e.player_index]
+		if poly_id ~= nil then
+			rendering.destroy(poly_id)
+		end
+		if selected_entity ~= nil then
+			local bb = selected_entity.selection_box
+			poly_id = rendering.draw_polygon {
+				color = player.color,
+				vertices = {
+					{target = {0, 0}},
+					{target = {1.5, -1.5}},
+					{target = {-1.5, -1.5}},
+					{target = {-0.5, -1.5}},
+					{target = {0.5, -1.5}},
+					{target = {-0.5, -4}},
+					{target = {0.5, -4}}
+				},
+				target = selected_entity,
+				target_offset = {0, -(bb.right_bottom.y - bb.left_top.y) / 2 - 0.25},
+				surface = player.surface
+			}
+		else
+			poly_id = nil
+		end
+		global.hover_targets[e.player_index] = poly_id
+		-- player.print(selected_entity.name)
 	end
 )
