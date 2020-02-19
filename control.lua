@@ -3,6 +3,17 @@ script.on_init(
 		global.boxes = {}
 		global.hover_targets = {}
 		global.to_display = {}
+		global.cursor = {}
+	end
+)
+
+script.on_load(
+	function ()
+		a = {}
+		a.boxes = global.boxes
+		a.hover_targets = global.hover_targets
+		a.to_display = global.to_display
+		a.cursor = global.cursor
 	end
 )
 
@@ -70,7 +81,7 @@ local function player_selected_area(e, name_text)
 			scale = 2
 		}
 	end
-	table.insert(global.boxes, {line_id, rect_id, e.player_index})
+	table.insert(a.boxes, {line_id, rect_id, e.player_index})
 end
 
 script.on_event({defines.events.on_player_selected_area},
@@ -84,7 +95,7 @@ script.on_event({defines.events.on_player_selected_area},
 script.on_event({defines.events.on_player_alt_selected_area},
 	function (e)
 		if e.item == "showme-tool" then
-			global.to_display[e.player_index] = e
+			a.to_display[e.player_index] = e
 			local box = game.players[e.player_index].gui.screen["showme-name-frame"]["showme-name-box"]
 			box.text = ""
 			game.players[e.player_index].gui.screen["showme-name-frame"].visible = true
@@ -95,10 +106,10 @@ script.on_event({defines.events.on_player_alt_selected_area},
 
 script.on_event({defines.events.on_tick},
 	function (e)
-		if #global.boxes == 0 then
+		if #a.boxes == 0 then
 			return
 		end
-		for idx, p in pairs(global.boxes) do
+		for idx, p in pairs(a.boxes) do
 			local line_id = p[1]
 			local rect_id = p[2]
 			if rendering.is_valid(rect_id) then
@@ -109,16 +120,16 @@ script.on_event({defines.events.on_tick},
 				local height = (lt.y - rb.y) * (rendering.get_time_to_live(line_id) / (ttl + 0.0))
 				rendering.set_to(line_id, {x = lt.x, y = rb.y + height})
 			else
-				table.remove(global.boxes, idx)
+				table.remove(a.boxes, idx)
 			end
 		end
 	end
 )
 
-script.on_event({defines.events.on_gui_click}, 
+script.on_event({defines.events.on_gui_click},
 	function (e)
 		if e.element.name == "showme-name-confirm" then
-			player_selected_area(global.to_display[e.player_index], e.element.parent["showme-name-box"].text)
+			player_selected_area(a.to_display[e.player_index], e.element.parent["showme-name-box"].text)
 			e.element.parent.visible = false
 		end
 	end
@@ -127,18 +138,35 @@ script.on_event({defines.events.on_gui_click},
 script.on_event({defines.events.on_gui_confirmed},
 	function (e)
 		if e.element.name == "showme-name-box" then
-			player_selected_area(global.to_display[e.player_index], e.element.text)
+			player_selected_area(a.to_display[e.player_index], e.element.text)
 			e.element.parent.visible = false
+		end
+	end
+)
+
+script.on_event({defines.events.on_player_cursor_stack_changed},
+	function (e)
+		local player = game.get_player(e.player_index)
+		if player.cursor_stack.valid_for_read then
+			a.cursor[e.player_index] = player.cursor_stack.name
+		else
+			a.cursor[e.player_index] = nil
+			local poly_id = a.hover_targets[e.player_index]
+			if poly_id ~= nil then
+				rendering.destroy(poly_id)
+			end
 		end
 	end
 )
 
 script.on_event({defines.events.on_selected_entity_changed},
 	function (e)
+		if a.cursor[e.player_index] ~= "showme-tool" then
+			return
+		end
 		local player = game.get_player(e.player_index)
-
 		local selected_entity = player.selected
-		local poly_id = global.hover_targets[e.player_index]
+		local poly_id = a.hover_targets[e.player_index]
 		if poly_id ~= nil then
 			rendering.destroy(poly_id)
 		end
@@ -162,7 +190,7 @@ script.on_event({defines.events.on_selected_entity_changed},
 		else
 			poly_id = nil
 		end
-		global.hover_targets[e.player_index] = poly_id
+		a.hover_targets[e.player_index] = poly_id
 		-- player.print(selected_entity.name)
 	end
 )
