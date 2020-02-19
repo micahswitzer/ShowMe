@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.6
+Date: 2020.02.19
+  Info:
+    - Updated to Factorio version 0.18
+  Features:
+    - A hovering arrow is now shown when holding the show-me tool and hovering over and entity.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 2019.08.30
   Bugfixes:
