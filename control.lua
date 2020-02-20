@@ -1,21 +1,23 @@
+a = {}
+
+function init_globals()
+	a.boxes = global.boxes
+	a.hover_targets = global.hover_targets
+	a.to_display = global.to_display
+	a.cursor = global.cursor
+end
+
 script.on_init(
 	function ()
 		global.boxes = {}
 		global.hover_targets = {}
 		global.to_display = {}
 		global.cursor = {}
+		init_globals()
 	end
 )
 
-script.on_load(
-	function ()
-		a = {}
-		a.boxes = global.boxes
-		a.hover_targets = global.hover_targets
-		a.to_display = global.to_display
-		a.cursor = global.cursor
-	end
-)
+script.on_load(init_globals)
 
 script.on_event({defines.events.on_player_joined_game},
 	function (e)
