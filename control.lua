@@ -1,6 +1,6 @@
-a = {}
+local a = {}
 
-function init_globals()
+local function init_globals()
 	a.boxes = global.boxes
 	a.hover_targets = global.hover_targets
 	a.to_display = global.to_display
